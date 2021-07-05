@@ -204,31 +204,32 @@ int delete(FILE *db_file, char *name) {
   entry *prev = NULL;
   entry *del = NULL ; /* Node to be deleted */
   int deleted = 0;
-
+while(p != NULL)
+{
    if(strcmp(p->name, name) == 0)
-  {
-    entry *temp = p;
-    p = p->next;
-    deleted = 1;
-    free(temp);
-  }
-  else{
-  while (p->next !=NULL) {
-    if (strcmp(p->next->name, name) == 0) 
-    {
-      del = p->next;
-      prev = p;
-      prev->next = del->next;
-      free(del);
-      deleted = 1;
-      break;                                          
-    }
-    p = p->next;
-  }
-  }
+   {
+       if(prev == NULL)
+       {
+           base = p->next;
+           free(p);
+           deleted = 1;
+           break;
+       }
 
-  write_all_entries(p);
-  free_entries(p);
+       else
+       {   
+           prev->next = p->next;
+           deleted = 1;
+           free(p);
+           break;
+       }
+   }
+    prev = p;
+    p = p->next;
+}
+  
+  write_all_entries(base);
+  free_entries(base);
     return deleted;
 }
  
@@ -246,15 +247,12 @@ int search(FILE *db_file,char *name)
     {
       printf("%s\n", p->phone);
       s = 1;
-       write_all_entries(base); 
-      free_entries(base);
-      return s;
+      break;
     }
-    
     p = p->next;
   }
   printf("no match\n"); 
-   write_all_entries(p); 
+    write_all_entries(base); 
   free_entries(base);
-  return 0;
+  return s;
 }
