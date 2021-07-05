@@ -95,7 +95,7 @@ FILE *open_db_file() {
 void free_entries(entry *p) 
 {
     entry* temp = p;
-  while(p->next != NULL)
+  while(p!= NULL)
   {
     temp = p;
     free(temp);
