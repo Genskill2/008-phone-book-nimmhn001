@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,36 +61,10 @@ int main(int argc, char *argv[]) {
     list(fp);
     fclose(fp);
     exit(0);
-  }
-  // Search : 
-   else if (strcmp(argv[1], "search") == 0) 
-  { 
-    if (argc != 3) 
-    {
-      print_usage("Improper arguments for list", argv[0]);
-      exit(1);
-    }
-
-    char *name = argv[2];
-    FILE *fp = open_db_file();
-    if (!search(fp, name)) 
-    {
-      printf("no match\n");
-      fclose(fp);
-      exit(1);
-    }
-    else
-    {
-      search(fp, name);
-      fclose(fp);
-      exit(0);
-    }
-    
-  } 
-  else if (strcmp(argv[1], "delete") == 0) 
-  {  /* Handle delete */
-    if (argc != 3) 
-    {
+  } else if (strcmp(argv[1], "search") == 0) {  /* Handle search */
+    printf("NOT IMPLEMENTED!\n"); /* TBD  */
+  } else if (strcmp(argv[1], "delete") == 0) {  /* Handle delete */
+    if (argc != 3) {
       print_usage("Improper arguments for delete", argv[0]);
       exit(1);
     }
@@ -102,38 +75,26 @@ int main(int argc, char *argv[]) {
       fclose(fp);
       exit(1);
     }
-   else
-   {
-     delete(fp, name);
-      fclose(fp);
-      exit(0);
-   }
-}
+    fclose(fp);
+    exit(0);
+  } else {
+    print_usage("Invalid command", argv[0]);
+    exit(1);
+  }
 }
 
-  FILE* open_db_file(){
-
-    FILE *fp=fopen(DB, "r");
-    if (fp == NULL)
-    {
+FILE *open_db_file() {
+  FILE *fp=fopen(DB, "r");
+  if (fp == NULL) {
     perror("Couldn't open database file");
     exit(1);
-   }
-    return fp;
-
   }
+  return fp;
+}
   
-void free_entries(entry *p) 
-{
-    entry* temp = p;
-  while(p->next != NULL)
-  {
-    temp = p;
-    free(temp);
-    p = p->next;
-
-  }
-   
+void free_entries(entry *p) {
+  /* TBD */
+  printf("Memory is not being freed. This needs to be fixed!\n");  
 }
 
 void print_usage(char *message, char *progname) {
@@ -161,7 +122,7 @@ create_entry_node(char *name, char *phone) {
 }
 
 
-entry *lload_entries(FILE *fp) {
+entry *load_entries(FILE *fp) {
   char name[20], phone[20];
   memset(name, '\0', 20);
   memset(phone, '\0', 20);
@@ -170,17 +131,20 @@ entry *lload_entries(FILE *fp) {
   entry *tmp = NULL;
   /* Description of %20[^,\n]
      % is the start of the specifier (like %s, %i etc.)
+
      20 is the maximum number of characters that this will take. We
         know that names and phone numbers will be 20 bytes maximum so
         we limit it to that. %20s will read in 20 character strings
         (including the , to separate the name and phone number. That's
         why we use
+
     [^,\n] Square brackets are used to indicate a set of allowed
            characters [abc] means only a, b, or c. With the ^, it's
            used to specify a set of disallowed characters. So [^abc]
            means any character *except* a, b, or c. [^,] means any
            character except a , [^,\n] means any character except a
            comma(,) or a newline(\n).
+
     %20[^,\n] will match a string of characters with a maximum length
      of 20 characters that doesn't have a comma(,) or a newline(\n).
   */        
@@ -226,13 +190,13 @@ void list(FILE *db_file) {
   free_entries(base);
 }
 
-
 int delete(FILE *db_file, char *name) {
   entry *p = load_entries(db_file);
   entry *base = p;
   entry *prev = NULL;
   entry *del = NULL ; /* Node to be deleted */
   int deleted = 0;
+
    if(strcmp(p->name, name) == 0)
   {
     entry *temp = p;
@@ -259,6 +223,8 @@ int delete(FILE *db_file, char *name) {
   free_entries(p);
     return deleted;
 }
+ 
+ 
 
 int search(FILE *db_file,char *name)
 {
@@ -284,49 +250,3 @@ int search(FILE *db_file,char *name)
   free_entries(base);
   return 0;
 }
-entry *load_entries(FILE *fp) {
-  char name[20], phone[20];
-  memset(name, '\0', 20);
-  memset(phone, '\0', 20);
-  entry *ret = NULL;
-  entry *current = NULL;
-  entry *tmp = NULL;
-  /* Description of %20[^,\n]
-     % is the start of the specifier (like %s, %i etc.)
-     20 is the maximum number of characters that this will take. We
-        know that names and phone numbers will be 20 bytes maximum so
-        we limit it to that. %20s will read in 20 character strings
-        (including the , to separate the name and phone number. That's
-        why we use
-    [^,\n] Square brackets are used to indicate a set of allowed
-           characters [abc] means only a, b, or c. With the ^, it's
-           used to specify a set of disallowed characters. So [^abc]
-           means any character *except* a, b, or c. [^,] means any
-           character except a , [^,\n] means any character except a
-           comma(,) or a newline(\n).
-    %20[^,\n] will match a string of characters with a maximum length
-     of 20 characters that doesn't have a comma(,) or a newline(\n).
-  */        
-  while (fscanf(fp, "%20[^,\n],%20[^,\n]\n", name, phone) != EOF) {
-    tmp = create_entry_node(name, phone);
-    if (ret == NULL)
-      ret = tmp;
-    else
-      current->next = tmp;
-    current = tmp;
-  }
-  return ret;
-}
-
-
-
-/* Matching node found. Delete it from the linked list.
-Deletion from a linked list like this
-
-p0 -> p1 -> p2
-
-means we have to make p0->next point directly to p2. The p1
-"node" is removed and free'd.
-
-If the node to be deleted is p0, it's a special case. 
-/* TBD */
