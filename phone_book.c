@@ -272,7 +272,7 @@ int search(FILE *db_file,char *name)
     {
       printf("%s\n", p->phone);
       s = 1;
-       write_all_entries(p); 
+       write_all_entries(base); 
       free_entries(base);
       return s;
     }
