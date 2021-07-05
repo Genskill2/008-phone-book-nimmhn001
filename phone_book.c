@@ -78,8 +78,6 @@ int main(int argc, char *argv[]) {
         printf("no match\n");
         fclose(fp);
         exit(1);
-        fclose(fp);
-        exit(1);
      }
     else
     {
@@ -97,7 +95,7 @@ int main(int argc, char *argv[]) {
     }
     FILE *fp = open_db_file();
     char *name = argv[2];
-    if (!delete(fp, name)) {
+    if (delete(fp, name) == 0) {
       printf("no match\n");
       fclose(fp);
       exit(1);
