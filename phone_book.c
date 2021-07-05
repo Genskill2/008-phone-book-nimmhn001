@@ -272,13 +272,15 @@ int search(FILE *db_file,char *name)
     {
       printf("%s\n", p->phone);
       s = 1;
+       write_all_entries(p); 
       free_entries(base);
       return s;
     }
     
     p = p->next;
   }
-  printf("no match\n");  
+  printf("no match\n"); 
+   write_all_entries(p); 
   free_entries(base);
   return 0;
 }
