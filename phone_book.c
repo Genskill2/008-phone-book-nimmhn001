@@ -219,8 +219,9 @@ void list(FILE *db_file) {
     count++;
     p=p->next;
   }
-  printf("Total entries : ");            // added count
-  printf("%d\n", count);
+   printf("Total entries :  %d\n",count);
+ // printf("Total entries : ");            // added count
+  //printf("%d\n", count);
 
   free_entries(base);
 }
